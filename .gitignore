@@ -1,0 +1,4 @@
+tests
+logs
+database/bot.db  
+config/secrets.py
