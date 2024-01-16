@@ -3,3 +3,4 @@ logs
 database/bot.db  
 config/secrets.py
 /Python
+.idea
