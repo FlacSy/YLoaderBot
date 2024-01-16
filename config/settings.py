@@ -1,4 +1,11 @@
 # Файл с настройками бота
-LOG_DIR = "logs"
-LOG_MAX_SIZE = 15 * 1024 * 1024  # 15 MB
-LOG_BACKUP_COUNT = 3
+import configparser
+
+config = configparser.ConfigParser()
+
+config.read('config\settings.ini')
+
+
+LOG_DIR = config.get('Loging', 'LOG_DIR')
+LOG_MAX_SIZE = config.get('Loging', 'LOG_MAX_SIZE') * 1024 * 1024
+LOG_BACKUP_COUNT = config.get('Loging', 'LOG_BACKUP_COUNT')

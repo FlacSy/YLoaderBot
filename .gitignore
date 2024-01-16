@@ -1,7 +1,7 @@
 tests
 logs
 database/bot.db  
-config/secrets.py
+config/secrets.ini
 bot/__pycache__
 bot/handlers/__pycache__
 config/__pycache__
