@@ -2,3 +2,8 @@ tests
 logs
 database/bot.db  
 config/secrets.py
+bot/__pycache__
+bot/handlers/__pycache__
+config/__pycache__
+database/__pycache__
+utils/__pycache__
