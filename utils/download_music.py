@@ -5,11 +5,9 @@ import asyncio
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from youtubesearchpython import VideosSearch
+from config.secrets import spotify_client_id, spotify_secret 
 
-client_id = "022c2e6340fe4ce99354bbd0a3299955" 
-secret = "ed1528ec956f4ef488f22b0d6236db7d"    
-
-auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=secret)
+auth_manager = SpotifyClientCredentials(client_id=spotify_client_id, client_secret=spotify_secret)
 spotify = spotipy.Spotify(auth_manager=auth_manager)
 
 async def download_soundcloud(url, output_path="downloads", message=None):
