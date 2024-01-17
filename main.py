@@ -4,6 +4,7 @@ from aiogram.types import ParseMode
 from aiogram.utils import executor
 from config.secrets import BOT_TOKEN
 from bot.handlers import start, help
+from tests import url
 from utils import helpers
 
 # Инициализация бота и диспетчера
@@ -14,8 +15,8 @@ dp = Dispatcher(bot)
 logging.info('Bot has been started')
 
 # Регистрация обработчиков команд
-dp.register_message_handler(start.start_command, commands=['start'])
-dp.register_message_handler(help.help_command, commands=['help'])
+dp.register_message_handler(start.start_command, commands=['start', 'about'])
+dp.register_message_handler(help.help_command, commands=['help', 'info'])
 
 # Запуск бота
 if __name__ == '__main__':
