@@ -3,8 +3,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.types import ParseMode
 from aiogram.utils import executor
 from config.secrets import BOT_TOKEN
-from bot.handlers import start, help
-from bot.handlers import url
+from bot.handlers import start, help, url
 from utils import helpers
 
 # Инициализация бота и диспетчера
