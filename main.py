@@ -8,7 +8,7 @@ from bot.handlers import url
 from utils import helpers
 
 # Инициализация бота и диспетчера
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot)
 
 # Логирование старта бота
