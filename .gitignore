@@ -1,6 +1,11 @@
 tests
 logs
 database/bot.db  
+<<<<<<< HEAD
+config/secrets.py
+/Python
+.idea
+=======
 config/secrets.ini
 bot/__pycache__
 bot/handlers/__pycache__
