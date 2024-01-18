@@ -22,7 +22,6 @@ async def download_tiktok(url, output_path="downloads", message=None):
 
     await message.answer_video(URLInputFile(video_link))
 
-
 async def download_youtube(url, output_path="downloads", message=None):
     options = {
         'format': 'bestvideo[filesize<50M]+bestaudio/best[filesize<50M]',
@@ -32,7 +31,7 @@ async def download_youtube(url, output_path="downloads", message=None):
     with yt_dlp.YoutubeDL(options) as ydl:
         info_dict = ydl.extract_info(url, download=False)
         title = info_dict.get('title', 'video')
-        filename = f'{output_path}/{title}.webm'
+        filename = ydl.prepare_filename(info_dict)
 
         ydl.download([url])
 
