@@ -1,9 +1,26 @@
 import yt_dlp
 import os
 from aiogram import types
+import requests
+from config.secrets import X_RapidAPI_Key, X_RapidAPI_Host
+from aiogram.types import URLInputFile
+
 
 async def download_tiktok(url, output_path="downloads", message=None):
-    pass
+    await message.answer('В процессе...')
+
+    querystring = {"url": url}
+
+    headers = {
+        "X-RapidAPI-Key": X_RapidAPI_Key,
+        "X-RapidAPI-Host": X_RapidAPI_Host
+    }
+
+    response = requests.get(url, headers=headers, params=querystring)
+
+    video_link = response.json()['data']['play']
+
+    await message.answer_video(URLInputFile(video_link))
 
 async def download_youtube(url, output_path="downloads", message=None):
     options = {
