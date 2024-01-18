@@ -11,21 +11,21 @@ auth_manager = SpotifyClientCredentials(client_id=spotify_client_id, client_secr
 spotify = spotipy.Spotify(auth_manager=auth_manager)
 
 async def download_soundcloud(url, output_path="downloads", message=None):
-    # Используйте более простое имя файла без специальных символов
-    filename = f'{output_path}/soundcloud_track.mp3'
     options = {
         'format': 'bestaudio/best',
         'extractaudio': True,
         'audioformat': 'mp3',
-        'outtmpl': filename,
+        'outtmpl': f'{output_path}/%(title)s.%(ext)s',
     }
 
     try:
         with youtube_dl.YoutubeDL(options) as ydl:
-            ydl.download([url])
+            info_dict = ydl.extract_info(url, download=False)
+            title = info_dict.get('title', 'video')
+            filename = ydl.prepare_filename(info_dict)
 
         if os.path.exists(filename) and message:
-            await message.answer_audio(audio=types.InputFile(filename))
+            await message.answer_audio(caption=title, audio=types.InputFile(filename))
             os.remove(filename)
     except Exception as e:
         print(f"Error: {e}")
@@ -38,7 +38,7 @@ async def download_spotify(url, output_path="downloads", message=None):
     videosSearch = VideosSearch(f'{performers} - {music}', limit=1)
     videoresult = videosSearch.result()["result"][0]["link"]
 
-    filename = f'{output_path}/spotify_track.mp3'
+    filename = f'{output_path}/{performers}_{music}.mp3'
     options = {
         'format': 'bestaudio/best',
         'extractaudio': True,
