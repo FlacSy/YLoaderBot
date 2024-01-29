@@ -1,9 +1,8 @@
 import os
 import youtube_dl
 from aiogram import types
-import asyncio
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyClientCredentials
 from youtubesearchpython import VideosSearch
 from config.secrets import spotify_client_id, spotify_secret 
 

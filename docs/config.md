@@ -35,10 +35,6 @@ ADMIN_ID = <значение_ID_админа>
 [Spotify]
 client_id = <значение_client_id_Spotify>
 secret = <значение_secret_Spotify>
-
-[TikTokApi]
-X-RapidAPI-Host = <значение_X-RapidAPI-Host_TikTokApi>
-X-RapidAPI-Key = <значение_X-RapidAPI-Key_TikTokApi>
 ```
 
 ### Пояснения:
@@ -46,6 +42,5 @@ X-RapidAPI-Key = <значение_X-RapidAPI-Key_TikTokApi>
 - `BOT_TOKEN`: Токен вашего бота для взаимодействия с платформой Telegram.
 - `ADMIN_ID`: ID администратора бота, необходим для управления некоторыми функциями.
 - `client_id` и `secret`: Идентификационные данные для взаимодействия с API Spotify.
-- `X-RapidAPI-Host` и `X-RapidAPI-Key`: Значения заголовков для взаимодействия с API TikTok.
 
 ---

@@ -13,8 +13,7 @@ async def url_handler(message: types.Message):
         await download_tiktok(url=message.text, message=message)
 
     elif re.match(r'https?://(?:www\.)?tiktok\.com/.*', message.text):
-        await message.answer("В нынешнее время поддержка тик-тока не реализована.")
-        # await download_tiktok(url=message.text, message=message)
+        await download_tiktok(url=message.text, message=message)
 
     elif re.match(r'https?://open\.spotify\.com/track/([\w-]+)', message.text):
         await message.answer("Ожидайте...")
