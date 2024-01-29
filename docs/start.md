@@ -1,4 +1,4 @@
-# start.md
+# bot/handlers/start.md 
 
 ## Модуль `start.py`
 

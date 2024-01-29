@@ -31,19 +31,3 @@ class SQLiteDatabaseManager:
 
         return False
 
-#
-#                       Пример использования 
-#
-#    
-# with SQLiteDatabaseManager() as cursor:
-#     # Выполняем SQL-запросы
-#     cursor.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)''')
-#     cursor.execute('''INSERT INTO users (name, age) VALUES (?, ?)''', ('John Doe', 25))
-#
-#
-# # Запрос данных
-# with SQLiteDatabaseManager() as cursor:
-#     cursor.execute("SELECT * FROM users")
-#     rows = cursor.fetchall()
-#     for row in rows:
-#         print(row)

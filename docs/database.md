@@ -1,56 +1,71 @@
-# database.py
+### Документация по database/database.py
 
-## Модуль `database.py`
-
-Модуль `database.py` предоставляет класс `SQLiteDatabaseManager` для управления подключением к SQLite базе данных. Этот класс реализует контекстный менеджер для удобства работы с базой данных.
-
-### Основной функционал:
-
-1. **Инициализация объекта:**
-    - `__init__(self, db_name="database/bot.db")`: Конструктор класса, принимающий имя файла базы данных. По умолчанию используется файл "bot.db" в подпапке "database". Создает объект управления базой данных.
-
-2. **Методы контекстного менеджера:**
-    - `__enter__(self) -> sqlite3.Cursor`: Открывает подключение к базе данных и возвращает объект `sqlite3.Cursor`. Если подключение не установлено, генерирует ошибку и логирует соответствующее сообщение.
-    - `__exit__(self, exc_type, exc_value, traceback) -> bool`: Завершает работу с базой данных, коммитит изменения, и закрывает соединение. В случае возникновения исключения, логирует сообщение об ошибке.
-
-### Использование:
-
-1. **Создание таблицы и вставка данных:**
-    ```python
-    with SQLiteDatabaseManager() as cursor:
-        # Создаем таблицу, если она не существует
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)''')
-        
-        # Вставляем данные в таблицу
-        cursor.execute('''INSERT INTO users (name, age) VALUES (?, ?)''', ('John Doe', 25))
-    ```
-
-2. **Запрос данных из таблицы:**
-    ```python
-    with SQLiteDatabaseManager() as cursor:
-        # Выполняем SQL-запрос
-        cursor.execute("SELECT * FROM users")
-        
-        # Получаем все строки результата
-        rows = cursor.fetchall()
-        
-        # Выводим результат
-        for row in rows:
-            print(row)
-    ```
-
-### Логирование:
-
-- Логирование осуществляется с использованием модуля `logging`.
-- Уровень логирования: INFO для успешных операций, ERROR для ошибок.
+#### Класс `SQLiteDatabaseManager`
 
 ```python
-# Пример конфигурации логирования
+import sqlite3
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+class SQLiteDatabaseManager:
+    def __init__(self, db_name="database/bot.db"):
+        """
+        Конструктор класса SQLiteDatabaseManager.
+
+        Параметры:
+            - db_name (str): Имя базы данных SQLite (по умолчанию: "database/bot.db").
+        """
+        self.db_name = db_name
+        self.conn = None
+        self.cursor = None
+
+    def __enter__(self):
+        """
+        Метод, вызываемый при входе в контекст управления базой данных.
+
+        Возвращает:
+            - obj: Объект курсора для выполнения SQL-запросов.
+
+        Исключения:
+            - sqlite3.Error: В случае ошибки при подключении к базе данных.
+        """
+        try:
+            self.conn = sqlite3.connect(self.db_name)
+            self.cursor = self.conn.cursor()
+            logging.info(f"Connected to the database: {self.db_name}")
+            return self.cursor
+        except sqlite3.Error as e:
+            logging.error(f"Error connecting to the database: {e}")
+            raise
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """
+        Метод, вызываемый при выходе из контекста управления базой данных.
+
+        Параметры:
+            - exc_type (type): Тип исключения (если есть).
+            - exc_value (obj): Значение исключения (если есть).
+            - traceback (obj): Объект трассировки (если есть).
+
+        Возвращает:
+            - bool: True, если исключение было обработано, False в противном случае.
+        """
+        if self.cursor:
+            self.cursor.close()
+            logging.info("Cursor closed")
+        if self.conn:
+            self.conn.commit()
+            self.conn.close()
+            logging.info("Connection closed")
+
+        if exc_type is not None:
+            logging.error(f"An error occurred: {exc_type}, {exc_value}")
+
+        return False
 ```
 
-### Замечания:
+#### Общая информация
 
-- В случае возникновения ошибок при подключении к базе данных, исключение `sqlite3.Error` будет сгенерировано, и соответствующее сообщение будет залогировано.
+- Класс `SQLiteDatabaseManager` предоставляет контекст управления базой данных SQLite.
+- При входе в контекст устанавливается соединение с базой данных, и создается курсор для выполнения SQL-запросов.
+- При выходе из контекста происходит закрытие курсора, фиксация изменений в базе данных и закрытие соединения.
+- Логируются сообщения о подключении, закрытии и возможных ошибках при работе с базой данных.

@@ -1,4 +1,4 @@
-# help.md
+# bot/handlers/help.md
 
 ## Модуль `help.py`
 

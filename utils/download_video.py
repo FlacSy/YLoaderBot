@@ -1,26 +1,26 @@
 import yt_dlp
 import os
+import re
 from aiogram import types
 import requests
-from config.secrets import X_RapidAPI_Key, X_RapidAPI_Host
-from aiogram.types import URLInputFile
 
+async def get_tiktok_video_id(url):
+    match = re.search(r'/video/(\d+)', url)
+    if match:
+        return match.group(1)
 
 async def download_tiktok(url, output_path="downloads", message=None):
-    await message.answer('В процессе...')
-
-    querystring = {"url": url}
-
-    headers = {
-        "X-RapidAPI-Key": X_RapidAPI_Key,
-        "X-RapidAPI-Host": X_RapidAPI_Host
-    }
-
-    response = requests.get(url, headers=headers, params=querystring)
-
-    video_link = response.json()['data']['play']
-
-    await message.answer_video(URLInputFile(video_link))
+    response = requests.get(url)
+    video_id = await get_tiktok_video_id(response.url)
+    response = requests.get(f'https://tikcdn.io/ssstik/{video_id}')
+    filename = f"{output_path}/{video_id}.mp4"
+    if response.status_code == 200:
+        with open(filename, "wb") as file:
+            file.write(response.content)
+            
+        if os.path.exists(filename) and message:
+            await message.answer_video(video=types.InputFile(filename))
+            os.remove(filename)
 
 async def download_youtube(url, output_path="downloads", message=None):
     options = {
