@@ -1,16 +1,26 @@
 # Обработчики команды /help
 from aiogram import types
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
+from utils.is_admin import IsAdmin
 
 async def help_command(message: types.Message):
-    # Обработчик команды /help
-    await message.answer(f"<b>Здраствуй, {message.from_user.first_name}, я YLoader</b>"
-                         "Вот список доступных команд:\n"
-                         "<i>/start</i> - начать работу с ботом\n"
-                         "<i>/help</i> - получить справку о доступных командах")
+    user_id = message.from_user.id
+    is_admin = IsAdmin(user_id).check_admin()
 
-    # Если нужно, можно добавить дополнительные действия, связанные с командой /help
+    if is_admin:
+        await message.answer(f"<b>Здраствуй, {message.from_user.first_name}, я YLoader</b>\n"
+                            "Вот список доступных команд пользователей:\n"
+                            "<i>/start</i> - начать работу с ботом\n"
+                            "<i>/help</i> - получить справку о доступных командах\n\n"
+                            "<b>Вот список доступных команд администратов:</b>\n"
+                            "<i>/log</i> - для получения фала с логами\n"
+                            )
+        
+    else:
+        await message.answer(f"<b>Здраствуй, {message.from_user.first_name}, я YLoader</b>"
+                            "Вот список доступных команд:\n"
+                            "<i>/start</i> - начать работу с ботом\n"
+                            "<i>/help</i> - получить справку о доступных командах")
+
 
 # Регистрация обработчика команды /help
 __all__ = ['help_command']

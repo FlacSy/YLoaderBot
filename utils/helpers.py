@@ -1,9 +1,6 @@
 # Вспомогательные функции
 import os
 import logging
-from aiogram import types
-from aiogram.utils import executor
-from config.secrets import ADMIN_ID
 import datetime
 
 async def on_startup(dp):
@@ -12,7 +9,8 @@ async def on_startup(dp):
 
 # Инициализация логгера
 log_file_path = os.path.join('logs', f'bot_log_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.txt')
-logging.basicConfig(level=logging.INFO, filename=log_file_path, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, filename=log_file_path, format='%(asctime)s - %(levelname)s - %(message)s', encoding='utf-8')
+
 
 async def on_shutdown(dp):
     # Уведомление о завершении работы

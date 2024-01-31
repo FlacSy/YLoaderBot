@@ -1,7 +1,5 @@
 # Обработчики команды /start
 from aiogram import types
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
 from database.database import SQLiteDatabaseManager
 
 async def start_command(message: types.Message):
