@@ -3,3 +3,4 @@ Ydl==1.3.0
 youtube-dl
 youtube-search-python
 spotipy
+yt_dlp
