@@ -23,17 +23,21 @@ logging.info('Bot has been started')
 
 # Function to register handlers
 async def register_handlers():
+    # Хендлеры команд
     dp.register_message_handler(start.start_command, commands=['start', 'about'])
     dp.register_message_handler(help.help_command, commands=['help', 'info'])
     dp.register_message_handler(log.log_command, commands=['log'])
     dp.register_message_handler(ad.cmd_start_advertise, commands=['ad_start'])
     dp.register_message_handler(ad.cmd_cancel, commands=["cancel_ad"], state="*")
     dp.register_message_handler(ad.cmd_show_ad_list, commands="show_ad_list", state="*")
+    dp.register_message_handler(ad.cmd_delete_ad, commands="delete_ad", state="*")
     dp.register_message_handler(ad.cmd_ad_state, commands="ad_state", state="*")
+    # Хендлеры FSM
     dp.register_message_handler(ad.handle_media_content, content_types=types.ContentType.PHOTO, state=ad.AdvertiseStates.waiting_for_media) 
     dp.register_message_handler(ad.handle_ad_text, content_types=types.ContentType.TEXT, state=ad.AdvertiseStates.waiting_for_text)
     dp.register_message_handler(url.url_handler, content_types=types.ContentType.TEXT)
-
+    # Хендлеры callback query
+    dp.register_callback_query_handler(ad.delete_ad, lambda c: c.data.startswith('delete_ad_')) 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(register_handlers())
