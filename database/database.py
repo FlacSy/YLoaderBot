@@ -2,7 +2,7 @@ import sqlite3
 import logging
 
 class SQLiteDatabaseManager:
-    def __init__(self, db_name = "database/bot.db"):
+    def __init__(self, db_name="database/bot.db"):
         self.db_name = db_name
         self.conn = None
         self.cursor = None
@@ -22,12 +22,16 @@ class SQLiteDatabaseManager:
             self.cursor.close()
             logging.info("Cursor closed")
         if self.conn:
-            self.conn.commit()
-            self.conn.close()
-            logging.info("Connection closed")
+            try:
+                self.conn.commit()
+                logging.info("Changes committed to the database")
+            except sqlite3.Error as commit_error:
+                logging.error(f"Error committing changes to the database: {commit_error}")
+            finally:
+                self.conn.close()
+                logging.info("Connection closed")
 
         if exc_type is not None:
             logging.error(f"An error occurred: {exc_type}, {exc_value}")
 
         return False
-

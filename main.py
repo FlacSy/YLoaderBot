@@ -5,9 +5,11 @@ from aiogram.types import ParseMode
 from aiogram import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage  # Import MemoryStorage
 from config.secrets import BOT_TOKEN
+from config.settings import USE_AD
 from bot.handlers import start, help, url
 from bot.admin import log, ad
 from utils import helpers
+from utils.ad_timer import send_advertisements
 
 # Initialize MemoryStorage
 storage = MemoryStorage()
@@ -26,14 +28,15 @@ async def register_handlers():
     dp.register_message_handler(log.log_command, commands=['log'])
     dp.register_message_handler(ad.cmd_start_advertise, commands=['ad_start'])
     dp.register_message_handler(ad.cmd_cancel, commands=["cancel_ad"], state="*")
+    dp.register_message_handler(ad.cmd_show_ad_list, commands="show_ad_list", state="*")
+    dp.register_message_handler(ad.cmd_ad_state, commands="ad_state", state="*")
     dp.register_message_handler(ad.handle_media_content, content_types=types.ContentType.PHOTO, state=ad.AdvertiseStates.waiting_for_media) 
     dp.register_message_handler(ad.handle_ad_text, content_types=types.ContentType.TEXT, state=ad.AdvertiseStates.waiting_for_text)
     dp.register_message_handler(url.url_handler, content_types=types.ContentType.TEXT)
 
-async def main():
-    await register_handlers()
-
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-    executor.start_polling(dp, on_startup=helpers.on_startup, on_shutdown=helpers.on_shutdown)
+    loop.run_until_complete(register_handlers())
+    executor.start_polling(dp, on_startup=helpers.on_startup, on_shutdown=helpers.on_shutdown, skip_updates=True)
+    if USE_AD:
+        loop.run_until_complete(send_advertisements(bot=bot)) 

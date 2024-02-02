@@ -12,6 +12,4 @@ class IsAdmin:
                 result = db.fetchone()
                 return bool(result)
         except Exception as e:
-            # Обработка ошибок, например, логирование
-            print(f"Error in check_admin: {e}")
             return False

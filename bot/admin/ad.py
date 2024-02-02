@@ -7,6 +7,8 @@ from aiogram.utils.markdown import hbold
 from database.database import SQLiteDatabaseManager
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from utils.is_admin import IsAdmin
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from config.settings import USE_AD
 
 class AdvertiseStates(StatesGroup):
     waiting_for_media = State()
@@ -61,3 +63,32 @@ async def cmd_cancel(message: Message, state: FSMContext):
 
     await state.finish()
     await message.answer("Вы отменили создание рекламы.")
+
+async def cmd_show_ad_list(message: Message):
+    user_id = message.from_user.id
+    is_admin = IsAdmin(user_id).check_admin()
+
+    if is_admin: 
+        with SQLiteDatabaseManager() as db_cursor:
+            db_cursor.execute("SELECT ad_text, media_path FROM ad")
+            ads = db_cursor.fetchall()
+
+        if not ads:
+            await message.answer("Список рекламы пуст.")
+            return
+
+        ad_list_text = "Список рекламы:\n"
+        for ad in ads:
+            ad_list_text += f"{hbold('Текст:')} {ad[0]}\n{hbold('Медиа контент:')} {ad[1]}\n\n"
+
+        await message.answer(ad_list_text)
+
+async def cmd_ad_state(message: Message):
+    user_id = message.from_user.id
+    is_admin = IsAdmin(user_id).check_admin()
+    
+    if is_admin: 
+        if USE_AD:
+            await message.answer("Реклама включена")
+        else:
+            await message.answer("Реклама выключена")

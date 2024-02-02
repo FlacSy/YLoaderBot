@@ -15,6 +15,8 @@ async def help_command(message: types.Message):
                             "<i>/log</i> - для получения фала с логами\n"
                             "<i>/ad_start</i> - для начала добавления рекламы\n"
                             "<i>/cancel_ad</i> - для отмены начала добавления рекламы\n"
+                            "<i>/show_ad_list</i> - показывает список рекламы\n"
+                            "<i>/ad_state</i> - показывает включена ли реклама\n"
                             )
         
     else:
