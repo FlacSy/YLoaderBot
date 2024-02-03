@@ -1,4 +1,5 @@
 import os
+import requests
 import youtube_dl
 from aiogram import types
 import spotipy
@@ -14,18 +15,32 @@ async def download_soundcloud(url, output_path="downloads", message=None):
         'format': 'bestaudio/best',
         'extractaudio': True,
         'audioformat': 'mp3',
-        'outtmpl': f'{output_path}/%(title)s.%(ext)s',
+        'writethumbnail': True,  
+        'outtmpl': f'{output_path}/%(title)s.%(ext)s',  
     }
 
     try:
         with youtube_dl.YoutubeDL(options) as ydl:
             info_dict = ydl.extract_info(url, download=False)
-            title = info_dict.get('title', 'video')
-            filename = ydl.prepare_filename(info_dict)
+            ydl.download([url])
+
+        filename = os.path.join(output_path, f"{info_dict['title']}.mp3")
+        thumbnail_filename = os.path.join(output_path, f"{info_dict['title']}")
 
         if os.path.exists(filename) and message:
-            await message.answer_audio(caption=title, audio=types.InputFile(filename))
+            thumbnail_path = info_dict.get('thumbnails')[-1]['url'] if 'thumbnails' in info_dict else None
+
+            # Сохраняем обложку
+            if thumbnail_path:
+                thumbnail_response = requests.get(thumbnail_path)
+                with open(thumbnail_filename, 'wb') as thumbnail_file:
+                    thumbnail_file.write(thumbnail_response.content)
+
+            await message.answer_audio(audio=types.InputFile(filename), thumb=types.InputFile(thumbnail_filename))
+
             os.remove(filename)
+            os.remove(thumbnail_filename)
+            os.remove(f"{thumbnail_filename}.jpg")
     except Exception as e:
         print(f"Error: {e}")
 
@@ -38,19 +53,33 @@ async def download_spotify(url, output_path="downloads", message=None):
     videoresult = videosSearch.result()["result"][0]["link"]
 
     filename = f'{output_path}/{performers}_{music}.mp3'
+    thumbnail_filename = f'{output_path}/{performers}_{music}'
+    
     options = {
         'format': 'bestaudio/best',
         'extractaudio': True,
         'audioformat': 'mp3',
+        'writethumbnail': True,  
         'outtmpl': filename,
     }
 
     try:
         with youtube_dl.YoutubeDL(options) as ydl:
+            info_dict = ydl.extract_info(videoresult, download=False)
             ydl.download([videoresult])
 
         if os.path.exists(filename) and message:
-            await message.answer_audio(audio=types.InputFile(filename))
-            os.remove(filename)
+            thumbnail_path = info_dict.get('thumbnails')[-1]['url'] if 'thumbnails' in info_dict else None
+
+            if thumbnail_path:
+                thumbnail_response = requests.get(thumbnail_path)
+                with open(thumbnail_filename, 'wb') as thumbnail_file:
+                    thumbnail_file.write(thumbnail_response.content)
+
+            await message.answer_audio(audio=types.InputFile(filename), thumb=types.InputFile(thumbnail_filename))
+
+        os.remove(filename)
+        os.remove(thumbnail_filename)
+        os.remove(f"{thumbnail_filename}.mp3.webp")
     except Exception as e:
         print(f"Error: {e}")

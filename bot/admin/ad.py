@@ -83,6 +83,47 @@ async def cmd_show_ad_list(message: Message):
 
         await message.answer(ad_list_text)
 
+async def cmd_delete_ad(message: Message):
+    user_id = message.from_user.id
+    is_admin = IsAdmin(user_id).check_admin()
+
+    if is_admin:
+        with SQLiteDatabaseManager() as db_cursor:
+            db_cursor.execute("SELECT id, ad_text, media_path FROM ad")
+            ads = db_cursor.fetchall()
+
+        if not ads:
+            await message.answer("Список рекламы пуст.")
+            return
+
+        keyboard = InlineKeyboardMarkup()
+        for ad in ads:
+            ad_id = ad[0]
+            ad_text = ad[1]
+            media_path = ad[2]
+            button_text = f"{ad_text} - {media_path}"
+            keyboard.add(InlineKeyboardButton(button_text, callback_data=f"delete_ad_{ad_id}"))
+
+        await message.answer("Выберите рекламу для удаления:", reply_markup=keyboard)
+
+async def delete_ad(callback_query: types.CallbackQuery):
+    ad_id = int(callback_query.data.split('_')[-1])
+
+    with SQLiteDatabaseManager() as db_cursor:
+        db_cursor.execute("SELECT ad_text, media_path FROM ad WHERE id=?", (ad_id,))
+        ad = db_cursor.fetchone()
+
+        if ad:
+            ad_text = ad[0]
+            media_path = ad[1]
+
+            db_cursor.execute("DELETE FROM ad WHERE id=?", (ad_id,))
+            os.remove(media_path)
+
+            await callback_query.answer("Реклама успешно удалена.")
+        else:
+            await callback_query.answer("Не удалось найти рекламу.")
+
 async def cmd_ad_state(message: Message):
     user_id = message.from_user.id
     is_admin = IsAdmin(user_id).check_admin()
