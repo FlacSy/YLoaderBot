@@ -4,3 +4,4 @@ youtube-dl
 youtube-search-python
 spotipy
 yt_dlp
+moviepy

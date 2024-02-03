@@ -1,9 +1,9 @@
+import re
 import logging
 import asyncio
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import ParseMode
 from aiogram import executor
-from aiogram.contrib.fsm_storage.memory import MemoryStorage  # Import MemoryStorage
+from aiogram.contrib.fsm_storage.memory import MemoryStorage  
 from config.secrets import BOT_TOKEN
 from config.settings import USE_AD
 from bot.handlers import start, help, url
@@ -35,9 +35,12 @@ async def register_handlers():
     # Хендлеры FSM
     dp.register_message_handler(ad.handle_media_content, content_types=types.ContentType.PHOTO, state=ad.AdvertiseStates.waiting_for_media) 
     dp.register_message_handler(ad.handle_ad_text, content_types=types.ContentType.TEXT, state=ad.AdvertiseStates.waiting_for_text)
+    dp.register_message_handler(url.url_handler, lambda message: not re.match(r'format_', message.text.lower()))
     dp.register_message_handler(url.url_handler, content_types=types.ContentType.TEXT)
     # Хендлеры callback query
-    dp.register_callback_query_handler(ad.delete_ad, lambda c: c.data.startswith('delete_ad_')) 
+    dp.register_callback_query_handler(url.handle_format_choice, lambda callback_query: callback_query.data.lower().startswith('format_'))
+
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(register_handlers())
