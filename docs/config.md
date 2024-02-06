@@ -7,8 +7,6 @@
 ```ini
 [Loging]
 LOG_DIR = logs
-LOG_MAX_SIZE = 15
-LOG_BACKUP_COUNT = 3
 ```
 
 ### Пояснения:
@@ -28,9 +26,6 @@ LOG_BACKUP_COUNT = 3
 ```ini
 [Bot]
 BOT_TOKEN = <значение_токена_бота>
-
-[Admin]
-ADMIN_ID = <значение_ID_админа>
 
 [Spotify]
 client_id = <значение_client_id_Spotify>
