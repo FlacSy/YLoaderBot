@@ -1,6 +1,50 @@
 # Документация проекта
 
-## 1. Архитектура проекта
+## Описание проекта 
+
+Проект предоставляет из себя Telegram бота для скачивание контента. На данный момент реализована поддержка:
+
+ - **YouTube** 
+ - **YouTube Shorts**
+ - **TikTok**
+ - **Spotify**
+ - **SoundCloud**
+## Начало роботы 
+1. Клонируйте репозиторий 
+```bash
+git clone https://github.com/FlacSy/YLoaderBot.git
+```
+
+2. Перейдите в деректорию 
+
+```bash
+cd YLoaderBot
+```
+3. Установите все зависимости
+
+Mac/Linux
+```bash
+pip3 install -r requirements.txt
+```
+
+Windows
+```bash
+pip install -r requirements.txt
+```
+4. Настройте конфигурацию 
+Подробее в [config.md](./config.md)
+
+5. Запустете бота 
+Mac/Linux
+```bash
+python3 main.py
+```
+
+Windows
+```bash
+python main.py
+```
+## Архитектура проекта
 
 Проект организован с использованием принципов структурирования кода и модульности. Все основные компоненты проекта распределены по следующим директориям:
 
