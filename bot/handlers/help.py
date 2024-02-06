@@ -35,5 +35,3 @@ async def help_command(message: types.Message):
         user_help = await user_commands()
         await message.answer(f"{greeting}\n{user_help}")
 
-# Регистрация обработчика команды /help
-__all__ = ['help_command']
