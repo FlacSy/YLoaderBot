@@ -8,8 +8,9 @@ from config.secrets import BOT_TOKEN
 from config.settings import USE_AD
 from bot.handlers import start, help, url
 from bot.admin import log, ad
-from utils import helpers
+from utils import helpers, add_admin
 from utils.ad_timer import send_advertisements
+from database.database import SQLiteDatabaseManager
 
 # Initialize MemoryStorage
 storage = MemoryStorage()
@@ -23,6 +24,17 @@ logging.info('Bot has been started')
 
 # Function to register handlers
 async def register_handlers():
+    # Проверка на наличие администратора
+    admin_id = get_admin_id()
+    if admin_id is None:
+        print("ID админа не установлен. Пожалуйста, введите ID пользователя для добавления в администраторы.")
+        try:
+            user_id = int(input("Введите ID пользователя для добавления в администраторы: "))
+            add_admin.add_admin(user_id)
+        except ValueError:
+            print("Некорректный ввод ID пользователя. Введите целое число.")
+            return
+        
     # Хендлеры команд
     dp.register_message_handler(start.start_command, commands=['start', 'about'])
     dp.register_message_handler(help.help_command, commands=['help', 'info'])
@@ -40,10 +52,20 @@ async def register_handlers():
     # Хендлеры callback query
     dp.register_callback_query_handler(url.handle_format_choice, lambda callback_query: callback_query.data.lower().startswith('format_'))
 
+def get_admin_id():
+    try:
+        with SQLiteDatabaseManager() as db:
+            db.execute("CREATE TABLE IF NOT EXISTS admins (user_id INTEGER PRIMARY KEY)")
+            result = db.execute("SELECT user_id FROM admins LIMIT 1").fetchone()
+            return result[0] if result else None
+    except Exception as e:
+        print(f"Error in get_admin_id: {e}")
+        return None
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(register_handlers())
     executor.start_polling(dp, on_startup=helpers.on_startup, on_shutdown=helpers.on_shutdown, skip_updates=True)
+    
     if USE_AD:
         loop.run_until_complete(send_advertisements(bot=bot)) 
