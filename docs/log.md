@@ -1,9 +1,23 @@
+# handlers/log.py
+
+## Модуль `log.py`
+
+Модуль `log.py` содержит обработчик команды для просмотра последнего файла с логами. Только администратор бота может вызвать эту команду.
+
+#### Основной функционал:
+
+1. **Просмотр последнего лог-файла**: Администратор может вызвать команду `/log` для получения последнего файла с логами.
+
+#### Код модуля:
+
+```python
 import os
 from aiogram import types
 from config.settings import LOG_DIR
 from utils.is_admin import IsAdmin
 
 async def log_command(message: types.Message):
+    # Обработчик команды /log
     user_id = message.from_user.id
     is_admin = IsAdmin(user_id).check_admin()
 
@@ -24,3 +38,4 @@ async def log_command(message: types.Message):
                 await message.answer_document(log_file)
         else:
             await message.reply(f"В папке {LOG_DIR} нет файлов с логами.")
+```
