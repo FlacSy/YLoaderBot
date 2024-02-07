@@ -1,13 +1,14 @@
 import sqlite3
 import logging
+from typing import Optional, Any, ContextManager
 
 class SQLiteDatabaseManager:
-    def __init__(self, db_name="database/bot.db"):
-        self.db_name = db_name
-        self.conn = None
-        self.cursor = None
+    def __init__(self, db_name: str = "database/bot.db"):
+        self.db_name: str = db_name
+        self.conn: Optional[sqlite3.Connection] = None
+        self.cursor: Optional[sqlite3.Cursor] = None
 
-    def __enter__(self):
+    def __enter__(self) -> sqlite3.Cursor:
         try:
             self.conn = sqlite3.connect(self.db_name)
             self.cursor = self.conn.cursor()
@@ -17,7 +18,7 @@ class SQLiteDatabaseManager:
             logging.error(f"Error connecting to the database: {e}")
             raise
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type: Optional[type], exc_value: Optional[Exception], traceback: Any) -> bool:
         if self.cursor:
             self.cursor.close()
             logging.info("Cursor closed")

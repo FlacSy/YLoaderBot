@@ -5,10 +5,11 @@ import re
 from aiogram import types
 import requests
 from moviepy.editor import VideoFileClip
+from typing import Optional
 
-async def download_tiktok(url, output_path="downloads", message=None, format="mp4"):
-    url = requests.get(url)
-    match = re.search(r'/video/(\d+)', url.url)
+async def download_tiktok(url: str, output_path: str = "downloads", message: Optional[types.Message] = None, format: str = "mp4") -> None:
+    url_response = requests.get(url)
+    match = re.search(r'/video/(\d+)', url_response.url)
     if match:
         video_id = match.group(1)
     try:
@@ -27,9 +28,9 @@ async def download_tiktok(url, output_path="downloads", message=None, format="mp
                     os.remove(mp3_filename)
 
                 elif format == "mp4":
-                    await message.answer_video(video=types.InputFile(filename))  
+                    await message.answer_video(video=types.InputFile(filename))
                     os.remove(filename)
-                    
+
         else:
             logging.error(f"Error downloading TikTok video. HTTP status code: {response.status_code}")
     except FileNotFoundError:
@@ -37,16 +38,16 @@ async def download_tiktok(url, output_path="downloads", message=None, format="mp
     except Exception as e:
         logging.error(f"Error downloading TikTok video: {str(e)}")
 
-async def convert_video_to_mp3(video_path, output_path):
+async def convert_video_to_mp3(video_path: str, output_path: str) -> None:
     video_clip = VideoFileClip(video_path)
     audio_clip = video_clip.audio
     audio_clip.write_audiofile(output_path, codec='mp3')
     audio_clip.close()
     video_clip.close()
 
-async def download_youtube(url, output_path="downloads", message=None, format="mp4"):
+async def download_youtube(url: str, output_path: str = "downloads", message: Optional[types.Message] = None, format: str = "mp4") -> None:
     options = {
-        'format': 'bestvideo[filesize<50M]+bestaudio/best[filesize<50M]',
+        'format': 'best[filesize<50M]',
         'outtmpl': f'{output_path}/%(title)s.%(ext)s',
     }
 
@@ -72,4 +73,4 @@ async def download_youtube(url, output_path="downloads", message=None, format="m
 
         except Exception as e:
             logging.error(f"Error downloading YouTube video: {str(e)}")
-            logging.error(f"HTTP response: {e.response.text if e.response else 'No response'}")
+            logging.error(f"HTTP response: {e.response.text if getattr(e, 'response', None) else 'No response'}")
