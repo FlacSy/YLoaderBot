@@ -1,9 +1,8 @@
 import re
 import logging
 import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram import executor
-from aiogram.contrib.fsm_storage.memory import MemoryStorage  
+from aiogram import Bot, Dispatcher, types, executor
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from config.secrets import BOT_TOKEN
 from config.settings import USE_AD
 from bot.handlers import start, help, url
@@ -13,28 +12,28 @@ from utils.ad_timer import send_advertisements
 from database.database import SQLiteDatabaseManager
 
 # Initialize MemoryStorage
-storage = MemoryStorage()
+storage: MemoryStorage = MemoryStorage()
 
 # Initialize bot and dispatcher with MemoryStorage
-bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
-dp = Dispatcher(bot, storage=storage)
+bot: Bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
+dp: Dispatcher = Dispatcher(bot, storage=storage)
 
 # Logging start of the bot
 logging.info('Bot has been started')
 
 # Function to register handlers
-async def register_handlers():
+async def register_handlers() -> None:
     # Проверка на наличие администратора
-    admin_id = get_admin_id()
+    admin_id: int = get_admin_id()
     if admin_id is None:
         print("ID админа не установлен. Пожалуйста, введите ID пользователя для добавления в администраторы.")
         try:
-            user_id = int(input("Введите ID пользователя для добавления в администраторы: "))
+            user_id: int = int(input("Введите ID пользователя для добавления в администраторы: "))
             add_admin.add_admin(user_id)
         except ValueError:
             print("Некорректный ввод ID пользователя. Введите целое число.")
             return
-        
+
     # Хендлеры команд
     dp.register_message_handler(start.start_command, commands=['start', 'about'])
     dp.register_message_handler(help.help_command, commands=['help', 'info'])
@@ -52,7 +51,7 @@ async def register_handlers():
     # Хендлеры callback query
     dp.register_callback_query_handler(url.handle_format_choice, lambda callback_query: callback_query.data.lower().startswith('format_'))
 
-def get_admin_id():
+def get_admin_id() -> int:
     try:
         with SQLiteDatabaseManager() as db:
             db.execute("CREATE TABLE IF NOT EXISTS admins (user_id INTEGER PRIMARY KEY)")
@@ -66,6 +65,6 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(register_handlers())
     executor.start_polling(dp, on_startup=helpers.on_startup, on_shutdown=helpers.on_shutdown, skip_updates=True)
-    
+
     if USE_AD:
-        loop.run_until_complete(send_advertisements(bot=bot)) 
+        loop.run_until_complete(send_advertisements(bot=bot))

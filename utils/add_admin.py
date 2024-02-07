@@ -1,6 +1,6 @@
 from database.database import SQLiteDatabaseManager
 
-def add_admin(user_id):
+def add_admin(user_id: int) -> None:
     try:
         with SQLiteDatabaseManager() as db:
             db.execute("CREATE TABLE IF NOT EXISTS admins (user_id INTEGER PRIMARY KEY)")

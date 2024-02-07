@@ -2,14 +2,15 @@ import os
 from aiogram import types
 from config.settings import LOG_DIR
 from utils.is_admin import IsAdmin
+from typing import List
 
-async def log_command(message: types.Message):
-    user_id = message.from_user.id
-    is_admin = IsAdmin(user_id).check_admin()
+async def log_command(message: types.Message) -> None:
+    user_id: int = message.from_user.id
+    is_admin: bool = IsAdmin(user_id).check_admin()
 
     if is_admin:    
         # Получение списка файлов в папке "logs"
-        log_files = [f for f in os.listdir(LOG_DIR) if os.path.isfile(os.path.join(LOG_DIR, f))]
+        log_files: List[str] = [f for f in os.listdir(LOG_DIR) if os.path.isfile(os.path.join(LOG_DIR, f))]
         
         # Проверка наличия файлов
         if log_files:
@@ -17,7 +18,7 @@ async def log_command(message: types.Message):
             log_files.sort(key=lambda x: os.path.getmtime(os.path.join(LOG_DIR, x)), reverse=True)
             
             # Выбор последнего файла
-            last_log_file = log_files[0]
+            last_log_file: str = log_files[0]
             
             # Отправка файла пользователю
             with open(os.path.join(LOG_DIR, last_log_file), 'rb') as log_file:

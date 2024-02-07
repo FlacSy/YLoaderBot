@@ -3,7 +3,7 @@ import re
 from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils.download_video import download_tiktok, download_youtube
-from utils.download_music import download_spotify, download_soundcloud
+from utils.download_music import download_spotify, download_soundcloud, download_apple_music
 
 async def url_handler(message: types.Message):
     if re.match(r'https?://(?:www\.)?tiktok\.com/.*', message.text) or re.match(r'https?://(?:www\.)?(?:youtube\.com/.*[=/]|youtu\.be/)([\w-]+)', message.text):
@@ -13,7 +13,7 @@ async def url_handler(message: types.Message):
 
         await message.answer(message.text, reply_markup=markup)
     else:
-        await download_handler(message=message, format='mp4') 
+        await download_handler(message=message, format='mp4')
 
 async def handle_format_choice(callback_query: types.CallbackQuery):
     if callback_query.data == 'format_mp4':
@@ -36,3 +36,6 @@ async def download_handler(message: types.Message, format: str):
     elif re.match(r'https?://soundcloud\.com/([\w-]+)/([\w-]+)', message.text):
         await message.answer("Ожидайте...")
         await download_soundcloud(url=message.text, message=message)
+    elif re.match(r'https?://music\.apple\.com/.*/album/.*?i=([\w-]+)', message.text):
+        await message.answer("Ожидайте...")
+        await download_apple_music(url=message.text, message=message)

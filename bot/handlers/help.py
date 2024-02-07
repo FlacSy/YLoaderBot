@@ -22,16 +22,15 @@ async def admin_commands() -> str:
         "<i>/delete_ad</i> - удаление рекламы из списка\n"
     )
 
-async def help_command(message: types.Message):
-    user_id = message.from_user.id
-    is_admin = IsAdmin(user_id).check_admin()
+async def help_command(message: types.Message) -> None:
+    user_id: int = message.from_user.id
+    is_admin: bool = IsAdmin(user_id).check_admin()
 
-    greeting = f"<b>Здравствуй, {message.from_user.first_name}, я YLoader</b>"
+    greeting: str = f"<b>Здравствуй, {message.from_user.first_name}, я YLoader</b>"
 
     if is_admin:
-        admin_help = await admin_commands()
+        admin_help: str = await admin_commands()
         await message.answer(f"{greeting}\n{admin_help}")
     else:
-        user_help = await user_commands()
+        user_help: str = await user_commands()
         await message.answer(f"{greeting}\n{user_help}")
-

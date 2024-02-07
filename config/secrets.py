@@ -1,11 +1,12 @@
-# Файл с секретными данными (токены, ключи и т.д.)
 import configparser
+from typing import Optional
 
 config = configparser.ConfigParser()
 
 config.read('config\secrets.ini')
 
-BOT_TOKEN = config.get('Bot', 'BOT_TOKEN')
+BOT_TOKEN: Optional[str] = config.get('Bot', 'BOT_TOKEN', fallback=None)
 
-spotify_client_id = config.get('Spotify', 'client_id')
-spotify_secret = config.get('Spotify', 'secret')
+
+SPOTIFY_CLIENT_ID: Optional[str] = config.get('Spotify', 'client_id', fallback=None)
+SPOTIFY_SECRET: Optional[str] = config.get('Spotify', 'secret', fallback=None)
