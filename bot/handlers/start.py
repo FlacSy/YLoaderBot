@@ -4,7 +4,9 @@ from typing import Optional
 
 async def start_command(message: types.Message) -> None:
     # Обработчик команды /start
-    await message.answer("Привет! Это YLoader. Я готов к работе!")
+    await message.answer("Привет! Это <b>YLoader.</b>\n\nОтправь мне ссылку на контент из данных сервисов:"
+                         "\n\n- <b>YouTube</b>\n- <b>YouTube Shorts</b>\n- <b>TikTok</b>"
+                         "\n- <b>SoundCloud</b>\n- <b>Spotify</b>\n- <b>Apple Music</b>\n\nИ я отправлю тебе его")
 
     # Получение информации о пользователе
     user_id: int = message.from_user.id
