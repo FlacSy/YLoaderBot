@@ -20,6 +20,7 @@
 - **TikTok**
 - **Spotify**
 - **SoundCloud**
+- **Apple Music**
 
 ## Начало работы
 
