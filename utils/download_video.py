@@ -47,7 +47,7 @@ async def convert_video_to_mp3(video_path: str, output_path: str) -> None:
 
 async def download_youtube(url: str, output_path: str = "downloads", message: Optional[types.Message] = None, format: str = "mp4") -> None:
     options = {
-        'format': 'best[filesize<50M]',
+        'format': 'mp4[filesize<50M]',
         'outtmpl': f'{output_path}/%(title)s.%(ext)s',
     }
 
