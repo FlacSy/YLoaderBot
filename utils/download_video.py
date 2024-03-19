@@ -15,24 +15,22 @@ async def download_tiktok(url: str, output_path: str = "downloads", message: Opt
     try:
         response = requests.get(f'https://tikcdn.io/ssstik/{video_id}')
         filename = f"{output_path}/{video_id}.{format}"
-        if response.status_code == 200:
-            with open(filename, "wb") as file:
-                file.write(response.content)
 
-            if os.path.exists(filename) and message:
+        with open(filename, "wb") as file:
+            file.write(response.content)
 
-                if format == "mp3":
-                    mp3_filename = f"{output_path}/{video_id}.mp3"
-                    await convert_video_to_mp3(filename, mp3_filename)
-                    await message.answer_voice(voice=types.InputFile(mp3_filename))
-                    os.remove(mp3_filename)
+        if os.path.exists(filename) and message:  
 
-                elif format == "mp4":
-                    await message.answer_video(video=types.InputFile(filename))
-                    os.remove(filename)
+            if format == "mp3":
+                mp3_filename = f"{output_path}/{video_id}.mp3"
+                await convert_video_to_mp3(filename, mp3_filename)
+                await message.answer_voice(voice=types.InputFile(mp3_filename))
+                os.remove(mp3_filename)
 
-        else:
-            logging.error(f"Error downloading TikTok video. HTTP status code: {response.status_code}")
+            elif format == "mp4":
+                await message.answer_video(video=types.InputFile(filename))
+                os.remove(filename)
+                
     except FileNotFoundError:
         logging.error(f"FileNotFoundError: The file {filename} was not found.")
     except Exception as e:
@@ -47,7 +45,7 @@ async def convert_video_to_mp3(video_path: str, output_path: str) -> None:
 
 async def download_youtube(url: str, output_path: str = "downloads", message: Optional[types.Message] = None, format: str = "mp4") -> None:
     options = {
-        'format': 'best[filesize<50M]',
+        'format': 'mp4[filesize<50M]',
         'outtmpl': f'{output_path}/%(title)s.%(ext)s',
     }
 
