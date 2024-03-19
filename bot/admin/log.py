@@ -20,8 +20,13 @@ async def log_command(message: types.Message) -> None:
             # Выбор последнего файла
             last_log_file: str = log_files[0]
             
-            # Отправка файла пользователю
-            with open(os.path.join(LOG_DIR, last_log_file), 'rb') as log_file:
-                await message.answer_document(log_file)
+            with open(os.path.join(LOG_DIR, last_log_file), 'r') as log_file:
+                log_content = log_file.read()
+
+            if len(log_content) <= 4000:
+                await message.reply(f"```\n{log_content}\n```")
+            else:
+                with open(os.path.join(LOG_DIR, last_log_file), 'rb') as log_file:
+                    await message.answer_document(log_file)
         else:
             await message.reply(f"В папке {LOG_DIR} нет файлов с логами.")
